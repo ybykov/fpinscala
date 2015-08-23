@@ -65,9 +65,17 @@ object List { // `List` companion object. Contains functions for creating and wo
     case Cons(x,xs) => if (n<=0) Cons(x,xs) else drop(xs,n-1)
   }
 
-  def dropWhile[A](l: List[A], f: A => Boolean): List[A] = sys.error("todo")
+  def dropWhile[A](l: List[A], f: A => Boolean): List[A] = l match {
+    case Nil => Nil
+    case Cons(x,xs) if f(x) => dropWhile(xs,f)
+    case Cons(x,xs) => Cons(x,xs)
+  }
 
-  def init[A](l: List[A]): List[A] = sys.error("todo")
+  def init[A](l: List[A]): List[A] = l match {
+    case Nil => Nil
+    case Cons(x,Nil) => Nil
+    case Cons(x,xs) => Cons(x,init(xs))
+  }
 
   def length[A](l: List[A]): Int = l match {
     case Nil => 0
@@ -80,5 +88,8 @@ object List { // `List` companion object. Contains functions for creating and wo
     case Cons(x,xs) => foldLeft(xs,f(z,x))(f)
   }
 
-  def map[A,B](l: List[A])(f: A => B): List[B] = sys.error("todo")
+  def map[A,B](l: List[A])(f: A => B): List[B] = l match {
+    case Nil => Nil
+    case Cons(x,xs) => Cons(f(x), map(xs)(f))
+  }
 }
