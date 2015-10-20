@@ -30,6 +30,13 @@ object RNG {
       (f(a), rng2)
     }
 
+  def map2[A,B,C](ra: Rand[A], rb: Rand[B])(f: (A, B) => C): Rand[C] =
+  rng => {
+    val (a, rng2) = ra(rng)
+    val (b, rng3) = rb(rng2)
+    (f(a,b),rng3)
+  }
+
   def nonNegativeInt(rng: RNG): (Int, RNG) = {
     val (n, nextRNG) = rng.nextInt
     val nonNeg =
@@ -44,6 +51,20 @@ object RNG {
     val f = n.toDouble / Int.MaxValue
     (f, nextRNG)
   }
+
+  def both[A,B](ra: Rand[A], rb: Rand[B]): Rand[(A,B)] =
+    map2(ra, rb)((_, _))
+
+  val randIntDouble: Rand[(Int, Double)] =
+    both(int, double)
+
+  val randDoubleInt: Rand[(Double, Int)] =
+    both(double, int)
+
+
+  def double_m: Rand[Double] =
+    map(nonNegativeInt)(n=>n.toDouble / Int.MaxValue)
+
 
   def intDouble(rng: RNG): ((Int,Double), RNG) = {
     val (n, rng2) = rng.nextInt
@@ -72,7 +93,7 @@ object RNG {
     }
   }
 
-  def map2[A,B,C](ra: Rand[A], rb: Rand[B])(f: (A, B) => C): Rand[C] = ???
+
 
   def sequence[A](fs: List[Rand[A]]): Rand[List[A]] = ???
 
